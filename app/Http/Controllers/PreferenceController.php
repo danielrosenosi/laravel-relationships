@@ -13,7 +13,7 @@ class PreferenceController extends Controller
 {
     public function show(int $userId): PreferenceResource
     {
-        $preference = Preference::where('user_id', $userId)->with('user')->get();
+        $preference = Preference::where('user_id', $userId)->with('user')->first();
 
         return new PreferenceResource($preference);
     }
@@ -34,7 +34,7 @@ class PreferenceController extends Controller
 
     public function update(UpdatePreferenceRequest $request, int $userId): PreferenceResource
     {
-        $preference = Preference::findOrFail($userId);
+        $preference = Preference::where('user_id', $userId)->first();
 
         $preference->update($request->validated());
 
