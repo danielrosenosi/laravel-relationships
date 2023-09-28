@@ -37,3 +37,49 @@ Route::get('/many-to-many-pivot', function () {
 
 //Relacionamento polimórficos
 
+Route::get('/one-to-one-polymorphic', function () {
+    $user = \App\Models\User::first();
+
+    if ($user->image) {
+        $user->image()->update(['path' => 'nome-image-update.png']);
+    } else {
+        $user->image()->create(['path' => 'nome-image.png']);
+    }
+
+    return response()->json($user->image);
+});
+
+
+Route::get('/one-to-many-polymorphic', function () {
+    $course = \App\Models\Course::first();
+
+    $course->comments()->create([
+        'subject' => 'Quarto comentário - ASSUNTO',
+        'content' => 'Quarto comentário - CONTEÚDO',
+    ]);
+
+    return response()->json($course->comments);
+
+    //Retornar quem fez o comentário de id 1
+    $comment = \App\Models\Comment::find(1);
+
+    return response()->json($comment->commentable);
+});
+
+Route::get('/many-to-many-polymorphic', function () {
+    $course = \App\Models\Course::first();
+
+    //anexando
+    $course->tags()->attach(1);
+    $course->tags()->attach(2);
+
+    //desanexando
+    $course->tags()->detach(1);
+
+    return response()->json($course->tags);
+
+    //Retornar usuários que possuem a tag de id 2
+    $tag = \App\Models\Tag::find(2);
+
+    return response()->json($tag->users);
+});
