@@ -27,3 +27,13 @@ Route::group(['prefix' => 'preference'], function () {
     Route::post('/', [PreferenceController::class, 'store'])->name('preferences.store');
     Route::put('/{userId}', [PreferenceController::class, 'update'])->name('preferences.update');
 });
+
+Route::get('/many-to-many-pivot', function () {
+    $user = \App\Models\User::with('permissions')->find(12);
+    $user->permissions()->attach([1 => ['active' => false]]);
+
+    return response()->json($user->permissions);
+});
+
+//Relacionamento polimórficos
+
