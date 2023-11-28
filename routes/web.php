@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PreferenceController;
+use App\Models\Attendance;
+use App\Models\PrimaryAttendance;
+use App\Models\SecondaryAttendance;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,19 +54,13 @@ Route::get('/one-to-one-polymorphic', function () {
 
 
 Route::get('/one-to-many-polymorphic', function () {
-    $course = \App\Models\Course::first();
+    $primaryAttendance = SecondaryAttendance::create(['patient_age' => 'João']);
+    $primaryAttendance->attendance()->create(['status' => 'confirmado']);
+    $primaryAttendance->load('attendance');
 
-    $course->comments()->create([
-        'subject' => 'Quarto comentário - ASSUNTO',
-        'content' => 'Quarto comentário - CONTEÚDO',
-    ]);
+    $allAttendances = Attendance::all()->load('attendable');
 
-    return response()->json($course->comments);
-
-    //Retornar quem fez o comentário de id 1
-    $comment = \App\Models\Comment::find(1);
-
-    return response()->json($comment->commentable);
+    return response()->json($allAttendances);
 });
 
 Route::get('/many-to-many-polymorphic', function () {
